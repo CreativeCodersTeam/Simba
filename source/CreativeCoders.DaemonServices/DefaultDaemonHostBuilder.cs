@@ -11,9 +11,14 @@ public class DefaultDaemonHostBuilder<TDaemonService> : IDaemonHostBuilder
 
     private readonly List<Action<IServiceCollection>> _configureServicesActions;
 
+    private readonly List<Action<IHostBuilder>> _configureHostBuilderActions;
+    
+    private Type? _installerType;
+
     public DefaultDaemonHostBuilder()
     {
         _configureServicesActions = new List<Action<IServiceCollection>>();
+        _configureHostBuilderActions = new List<Action<IHostBuilder>>();
     }
     
     public IDaemonHostBuilder WithArgs(string[] args)
@@ -30,11 +35,28 @@ public class DefaultDaemonHostBuilder<TDaemonService> : IDaemonHostBuilder
         return this;
     }
 
-    public IHost Build()
+    public IDaemonHostBuilder ConfigureHostBuilder(Action<IHostBuilder> configureHostBuilder)
+    {
+        _configureHostBuilderActions.Add(configureHostBuilder);
+
+        return this;
+    }
+
+    public IDaemonHostBuilder WithInstaller<TInstaller>() where TInstaller : class, IDaemonInstaller
+    {
+        _installerType = typeof(TInstaller);
+
+        return this;
+    }
+
+    public IDaemonHost Build()
     {
         var builder = _args != null
             ? Host.CreateDefaultBuilder(_args)
             : Host.CreateDefaultBuilder();
+        
+        _configureHostBuilderActions
+            .ForEach(configureHostBuilder => configureHostBuilder(builder));
 
         builder.ConfigureServices((_, services) =>
         {
@@ -46,6 +68,6 @@ public class DefaultDaemonHostBuilder<TDaemonService> : IDaemonHostBuilder
                 .ForEach(configureServices => configureServices(services));
         });
 
-        return builder.Build();
+        return new DaemonHost(builder.Build(), _args ?? Array.Empty<string>(), _installerType);
     }
 }

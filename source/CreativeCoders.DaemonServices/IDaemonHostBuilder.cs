@@ -9,5 +9,10 @@ public interface IDaemonHostBuilder
 
     IDaemonHostBuilder ConfigureServices(Action<IServiceCollection> configureServices);
 
-    IHost Build();
+    IDaemonHostBuilder ConfigureHostBuilder(Action<IHostBuilder> configureHostBuilder);
+
+    IDaemonHostBuilder WithInstaller<TInstaller>()
+        where TInstaller : class, IDaemonInstaller;
+
+    IDaemonHost Build();
 }
