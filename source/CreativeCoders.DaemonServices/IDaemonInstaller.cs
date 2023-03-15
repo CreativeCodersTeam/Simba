@@ -1,8 +1,10 @@
-﻿namespace CreativeCoders.DaemonServices;
+﻿using CreativeCoders.DaemonServices.Definition;
+
+namespace CreativeCoders.DaemonServices;
 
 public interface IDaemonInstaller
 {
-    void Install();
+    void Install(DaemonDefinition daemonDefinition);
 
-    void Uninstall();
+    void Uninstall(DaemonDefinition daemonDefinition);
 }

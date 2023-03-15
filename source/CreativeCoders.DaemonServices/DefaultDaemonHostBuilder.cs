@@ -7,23 +7,22 @@ namespace CreativeCoders.DaemonServices;
 public class DefaultDaemonHostBuilder<TDaemonService> : IDaemonHostBuilder
     where TDaemonService : class, IDaemonService
 {
-    private string[]? _args;
-
     private readonly List<Action<IServiceCollection>> _configureServicesActions;
 
     private readonly List<Action<IHostBuilder>> _configureHostBuilderActions;
     
-    private Type? _installerType;
+    private readonly DaemonHostSetupInfo _daemonHostSetupInfo;
 
     public DefaultDaemonHostBuilder()
     {
         _configureServicesActions = new List<Action<IServiceCollection>>();
         _configureHostBuilderActions = new List<Action<IHostBuilder>>();
+        _daemonHostSetupInfo = new DaemonHostSetupInfo();
     }
     
     public IDaemonHostBuilder WithArgs(string[] args)
     {
-        _args = args;
+        _daemonHostSetupInfo.Args = args;
 
         return this;
     }
@@ -44,15 +43,15 @@ public class DefaultDaemonHostBuilder<TDaemonService> : IDaemonHostBuilder
 
     public IDaemonHostBuilder WithInstaller<TInstaller>() where TInstaller : class, IDaemonInstaller
     {
-        _installerType = typeof(TInstaller);
+        _daemonHostSetupInfo.InstallerType = typeof(TInstaller);
 
         return this;
     }
 
     public IDaemonHost Build()
     {
-        var builder = _args != null
-            ? Host.CreateDefaultBuilder(_args)
+        var builder = _daemonHostSetupInfo.Args != null
+            ? Host.CreateDefaultBuilder(_daemonHostSetupInfo.Args)
             : Host.CreateDefaultBuilder();
         
         _configureHostBuilderActions
@@ -68,6 +67,6 @@ public class DefaultDaemonHostBuilder<TDaemonService> : IDaemonHostBuilder
                 .ForEach(configureServices => configureServices(services));
         });
 
-        return new DaemonHost(builder.Build(), _args ?? Array.Empty<string>(), _installerType);
+        return new DefaultDaemonHost(builder.Build(), _daemonHostSetupInfo);
     }
 }
