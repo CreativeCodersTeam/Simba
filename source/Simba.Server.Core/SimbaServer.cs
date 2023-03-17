@@ -1,12 +1,24 @@
-﻿using CreativeCoders.DaemonServices;
+﻿using CreativeCoders.Core.Collections;
+using CreativeCoders.Daemon;
+using JetBrains.Annotations;
 using MQTTnet;
 using MQTTnet.Server;
+using Simba.Server.Core.Logging;
+using Simba.Server.Core.SubModules;
 
 namespace Simba.Server.Core;
 
+[UsedImplicitly]
 public class SimbaServer : IDaemonService
 {
+    private readonly IEnumerable<ISubModule> _subModules;
+    
     private MqttServer? _mqttServer;
+
+    public SimbaServer(IEnumerable<ISubModule> subModules)
+    {
+        _subModules = subModules;
+    }
     
     private async Task<MqttServer> StartServerAsync()
     {
@@ -20,6 +32,8 @@ public class SimbaServer : IDaemonService
         
         var server = mqttFactory.CreateMqttServer(mqttServerOptions);
         
+        _subModules.ForEach(subModule => subModule.Init(server));
+
         await server.StartAsync();
         
         return server;
