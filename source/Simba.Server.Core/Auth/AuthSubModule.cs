@@ -8,16 +8,13 @@ public class AuthSubModule : ISubModule
 {
     private readonly IAuthenticator _authenticator;
 
-    public AuthSubModule(IAuthenticator authenticator)
+    public AuthSubModule(IAuthenticator authenticator, MqttServer mqttServer)
     {
         _authenticator = authenticator;
+        
+        mqttServer.ValidatingConnectionAsync += ServerOnValidatingConnectionAsync;
     }
     
-    public void Init(ServerController serverController)
-    {
-        serverController.Server.ValidatingConnectionAsync += ServerOnValidatingConnectionAsync;
-    }
-
     private async Task ServerOnValidatingConnectionAsync(ValidatingConnectionEventArgs arg)
     {
         var authResponse = await _authenticator
@@ -34,4 +31,6 @@ public class AuthSubModule : ISubModule
             arg.ReasonCode = MqttConnectReasonCode.NotAuthorized;
         }
     }
+
+    public string Name => nameof(AuthSubModule);
 }

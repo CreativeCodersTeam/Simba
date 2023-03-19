@@ -30,8 +30,10 @@ public class EventController<TArg>
         }
     }
 
-    public void AddEventHandler()
-    {
-        
-    }
+    // public ServerEventHandler<TArg> AddEventHandler(Func<ServerEventArg<TArg>, Task> onExecuteAsync)
+    // {
+    //     _eventHandlers.Add(new ServerEventHandler<TArg>(onExecuteAsync));
+    // }
+    //
+    // public 
 }

@@ -4,5 +4,5 @@ namespace Simba.Server.Core.SubModules;
 
 public interface ISubModule
 {
-    void Init(ServerController serverController);
+    public string Name { get; }
 }

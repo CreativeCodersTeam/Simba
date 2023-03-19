@@ -1,9 +1,8 @@
 ﻿using CreativeCoders.Core.Collections;
 using CreativeCoders.Daemon;
 using JetBrains.Annotations;
-using MQTTnet;
+using Microsoft.Extensions.Logging;
 using MQTTnet.Server;
-using Simba.Server.Core.Logging;
 using Simba.Server.Core.SubModules;
 
 namespace Simba.Server.Core;
@@ -11,46 +10,38 @@ namespace Simba.Server.Core;
 [UsedImplicitly]
 public class SimbaServer : IDaemonService
 {
-    private readonly IEnumerable<ISubModule> _subModules;
+    private readonly ISubModule[] _subModules;
     
-    private MqttServer? _mqttServer;
+    private readonly MqttServer _mqttServer;
+    
+    private readonly ILogger<SimbaServer> _logger;
 
     private ServerController? _serverController;
 
-    public SimbaServer(IEnumerable<ISubModule> subModules)
+    public SimbaServer(IEnumerable<ISubModule> subModules, MqttServer mqttServer,
+        ILogger<SimbaServer> logger)
     {
-        _subModules = subModules;
+        _subModules = subModules.ToArray();
+        _mqttServer = mqttServer;
+        _logger = logger;
+
+        _subModules.ForEach(x => _logger.LogInformation("Sub module {SubModuleName} loaded", x.Name));
     }
     
-    private async Task<MqttServer> StartServerAsync()
-    {
-        var mqttFactory = new MqttFactory();
-
-        // Due to security reasons the "default" endpoint (which is unencrypted) is not enabled by default!
-        var mqttServerOptions = mqttFactory
-            .CreateServerOptionsBuilder()
-            .WithDefaultEndpoint()
-            .Build();
-        
-        var server = mqttFactory.CreateMqttServer(mqttServerOptions);
-
-        _serverController = new ServerController(server);
-        
-        _subModules.ForEach(subModule => subModule.Init(_serverController));
-
-        await server.StartAsync();
-        
-        return server;
-    }
-
     public async Task StartAsync()
     {
-        _mqttServer = await StartServerAsync().ConfigureAwait(false);
+        _logger.LogInformation("Simba server starting...");
+        
+        _serverController = new ServerController(_mqttServer);
+        
+        await _mqttServer.StartAsync();
+        
+        _logger.LogInformation("Simba server started");
     }
 
     public async Task StopAsync()
     {
-        if (_mqttServer == null)
+        if (!_mqttServer.IsStarted)
         {
             throw new InvalidOperationException("Server must be started");
         }

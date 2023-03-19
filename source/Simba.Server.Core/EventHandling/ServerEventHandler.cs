@@ -13,4 +13,6 @@ public class ServerEventHandler<TArg>
     {
         return _onExecuteAsync(serverEventArg);
     }
+
+    public bool AlwaysExecute { get; set; }
 }

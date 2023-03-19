@@ -5,13 +5,13 @@ namespace Simba.Server.Core.Retaining;
 
 public class RetainSubModule : ISubModule
 {
-    public void Init(ServerController serverController)
+    public RetainSubModule(MqttServer mqttServer)
     {
-        serverController.Server.RetainedMessageChangedAsync += ServerOnRetainedMessageChangedAsync;
+        mqttServer.RetainedMessageChangedAsync += ServerOnRetainedMessageChangedAsync;
         
-        serverController.Server.RetainedMessagesClearedAsync += ServerOnRetainedMessagesClearedAsync;
+        mqttServer.RetainedMessagesClearedAsync += ServerOnRetainedMessagesClearedAsync;
         
-        serverController.Server.LoadingRetainedMessageAsync += ServerOnLoadingRetainedMessageAsync;
+        mqttServer.LoadingRetainedMessageAsync += ServerOnLoadingRetainedMessageAsync;
     }
 
     private async Task ServerOnLoadingRetainedMessageAsync(LoadingRetainedMessagesEventArgs arg)
@@ -28,4 +28,6 @@ public class RetainSubModule : ISubModule
     {
         //throw new NotImplementedException();
     }
+
+    public string Name => nameof(RetainSubModule);
 }

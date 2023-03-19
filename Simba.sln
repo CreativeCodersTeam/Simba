@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simba.Server", "source\Simb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simba.Server.Core", "source\Simba.Server.Core\Simba.Server.Core.csproj", "{0688A32D-5D32-4163-B746-0FA00D7CF818}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simba.Server.Linux", "source\Simba.Server.Linux\Simba.Server.Linux.csproj", "{ADCE92C1-D5A9-4234-A2F0-A9F626CED4F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,6 +16,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A14D76C0-E5D1-40AF-8B42-AC3C6D69F48E} = {F5F0FABD-5A1F-4276-BC73-27B99F8E00FC}
 		{0688A32D-5D32-4163-B746-0FA00D7CF818} = {F5F0FABD-5A1F-4276-BC73-27B99F8E00FC}
+		{ADCE92C1-D5A9-4234-A2F0-A9F626CED4F4} = {F5F0FABD-5A1F-4276-BC73-27B99F8E00FC}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{A14D76C0-E5D1-40AF-8B42-AC3C6D69F48E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -24,5 +27,9 @@ Global
 		{0688A32D-5D32-4163-B746-0FA00D7CF818}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0688A32D-5D32-4163-B746-0FA00D7CF818}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0688A32D-5D32-4163-B746-0FA00D7CF818}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADCE92C1-D5A9-4234-A2F0-A9F626CED4F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADCE92C1-D5A9-4234-A2F0-A9F626CED4F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADCE92C1-D5A9-4234-A2F0-A9F626CED4F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADCE92C1-D5A9-4234-A2F0-A9F626CED4F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
