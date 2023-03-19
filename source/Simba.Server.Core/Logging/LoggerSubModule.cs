@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using MQTTnet.Protocol;
 using MQTTnet.Server;
 using Simba.Server.Core.SubModules;
 
@@ -13,22 +14,11 @@ public class LoggerSubModule : ISubModule
         _logger = logger;
     }
     
-    public void Init(MqttServer server)
+    public void Init(ServerController serverController)
     {
-        server.ClientConnectedAsync += args => Log("Client connected: {@args}", args);;
+        serverController.Server.ClientConnectedAsync += args => Log("Client connected: {@args}", args);;
 
-        server.ClientDisconnectedAsync += args => Log("Client disconnected: {@args}", args);
-        
-        server.ValidatingConnectionAsync += ServerOnValidatingConnectionAsync;
-    }
-
-    private async Task ServerOnValidatingConnectionAsync(ValidatingConnectionEventArgs arg)
-    {
-        if (arg.UserName == "testuser")
-        {
-            return;
-        }
-        await arg.ChannelAdapter.DisconnectAsync(CancellationToken.None);
+        serverController.Server.ClientDisconnectedAsync += args => Log("Client disconnected: {@args}", args);
     }
 
     private Task Log(string logMessage, params object[] args)

@@ -15,6 +15,8 @@ public class SimbaServer : IDaemonService
     
     private MqttServer? _mqttServer;
 
+    private ServerController? _serverController;
+
     public SimbaServer(IEnumerable<ISubModule> subModules)
     {
         _subModules = subModules;
@@ -31,8 +33,10 @@ public class SimbaServer : IDaemonService
             .Build();
         
         var server = mqttFactory.CreateMqttServer(mqttServerOptions);
+
+        _serverController = new ServerController(server);
         
-        _subModules.ForEach(subModule => subModule.Init(server));
+        _subModules.ForEach(subModule => subModule.Init(_serverController));
 
         await server.StartAsync();
         

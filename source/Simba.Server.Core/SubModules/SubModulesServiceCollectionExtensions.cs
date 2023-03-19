@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Simba.Server.Core.Auth;
 using Simba.Server.Core.Logging;
 using Simba.Server.Core.Retaining;
 
@@ -11,5 +12,9 @@ public static class SubModulesServiceCollectionExtensions
         services.AddSingleton<ISubModule, LoggerSubModule>();
 
         services.AddSingleton<ISubModule, RetainSubModule>();
+
+        services.AddSingleton<ISubModule, AuthSubModule>();
+
+        services.AddSingleton<IAuthenticator, NoAuthAuthenticator>();
     }
 }

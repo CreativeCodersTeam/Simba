@@ -4,5 +4,5 @@ namespace Simba.Server.Core.SubModules;
 
 public interface ISubModule
 {
-    void Init(MqttServer server);
+    void Init(ServerController serverController);
 }

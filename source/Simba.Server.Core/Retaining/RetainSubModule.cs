@@ -5,13 +5,13 @@ namespace Simba.Server.Core.Retaining;
 
 public class RetainSubModule : ISubModule
 {
-    public void Init(MqttServer server)
+    public void Init(ServerController serverController)
     {
-        server.RetainedMessageChangedAsync += ServerOnRetainedMessageChangedAsync;
+        serverController.Server.RetainedMessageChangedAsync += ServerOnRetainedMessageChangedAsync;
         
-        server.RetainedMessagesClearedAsync += ServerOnRetainedMessagesClearedAsync;
+        serverController.Server.RetainedMessagesClearedAsync += ServerOnRetainedMessagesClearedAsync;
         
-        server.LoadingRetainedMessageAsync += ServerOnLoadingRetainedMessageAsync;
+        serverController.Server.LoadingRetainedMessageAsync += ServerOnLoadingRetainedMessageAsync;
     }
 
     private async Task ServerOnLoadingRetainedMessageAsync(LoadingRetainedMessagesEventArgs arg)
