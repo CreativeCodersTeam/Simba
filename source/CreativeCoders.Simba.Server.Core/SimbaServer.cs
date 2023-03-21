@@ -16,8 +16,6 @@ public class SimbaServer : IDaemonService
     
     private readonly ILogger<SimbaServer> _logger;
 
-    private ServerController? _serverController;
-
     public SimbaServer(IEnumerable<ISubModule> subModules, MqttServer mqttServer,
         ILogger<SimbaServer> logger)
     {
@@ -31,8 +29,6 @@ public class SimbaServer : IDaemonService
     public async Task StartAsync()
     {
         _logger.LogInformation("Simba server starting...");
-        
-        _serverController = new ServerController(_mqttServer);
         
         await _mqttServer.StartAsync();
         

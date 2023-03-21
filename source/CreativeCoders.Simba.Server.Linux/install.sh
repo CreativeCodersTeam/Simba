@@ -1,7 +1,6 @@
 #!/bin/bash
 
 SERVICE_NAME="simba-server"
-
 APP_DIR="/opt/simbasrv"
 USER_NAME="simba-user"
 
