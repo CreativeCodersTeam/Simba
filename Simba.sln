@@ -2,11 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{F5F0FABD-5A1F-4276-BC73-27B99F8E00FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simba.Server", "source\Simba.Server\Simba.Server.csproj", "{A14D76C0-E5D1-40AF-8B42-AC3C6D69F48E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.Simba.Server.ConsoleApp", "source\CreativeCoders.Simba.Server.ConsoleApp\CreativeCoders.Simba.Server.ConsoleApp.csproj", "{A14D76C0-E5D1-40AF-8B42-AC3C6D69F48E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simba.Server.Core", "source\Simba.Server.Core\Simba.Server.Core.csproj", "{0688A32D-5D32-4163-B746-0FA00D7CF818}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.Simba.Server.Core", "source\CreativeCoders.Simba.Server.Core\CreativeCoders.Simba.Server.Core.csproj", "{0688A32D-5D32-4163-B746-0FA00D7CF818}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simba.Server.Linux", "source\Simba.Server.Linux\Simba.Server.Linux.csproj", "{ADCE92C1-D5A9-4234-A2F0-A9F626CED4F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativeCoders.Simba.Server.Linux", "source\CreativeCoders.Simba.Server.Linux\CreativeCoders.Simba.Server.Linux.csproj", "{ADCE92C1-D5A9-4234-A2F0-A9F626CED4F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
