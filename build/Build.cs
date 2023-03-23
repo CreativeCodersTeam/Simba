@@ -21,7 +21,7 @@ using static Nuke.Common.IO.PathConstruction;
     "ci",
     GitHubActionsImage.UbuntuLatest,
     //On = new[] { GitHubActionsTrigger.Push },
-    OnPushBranches = new []{"featur*"},
+    OnPushBranches = new []{"featur**"},
     InvokedTargets = new[] { nameof(Compile) },
     FetchDepth = 0
     )]

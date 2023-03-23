@@ -19,7 +19,7 @@ name: ci
 on:
   push:
     branches:
-      - 'featur*'
+      - 'featur**'
 
 jobs:
   ubuntu-latest:
