@@ -1,12 +1,16 @@
 using System;
 using System.Linq;
+using CreativeCoders.NukeBuild;
+using CreativeCoders.NukeBuild.BuildActions;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Execution;
+using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
+using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.FileSystemTasks;
@@ -16,11 +20,12 @@ using static Nuke.Common.IO.PathConstruction;
     "ci",
     GitHubActionsImage.UbuntuLatest,
     On = new[] { GitHubActionsTrigger.Push, GitHubActionsTrigger.PullRequest },
+    OnPushBranches = new []{"feature*"},
     InvokedTargets = new[] { nameof(Compile) },
     FetchDepth = 0
     )]
 
-class Build : NukeBuild
+class Build : NukeBuild, IBuildInfo
 {
     /// Support plugins are available for:
     ///   - JetBrains ReSharper        https://nuke.build/resharper
@@ -33,21 +38,49 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
+    [Solution] readonly Solution Solution;
+
+    [GitRepository] readonly GitRepository GitRepository;
+
+    [GitVersion] readonly GitVersion GitVersion;
+
+    AbsolutePath SourceDirectory => RootDirectory / "source";
+
+    AbsolutePath ArtifactsDirectory => RootDirectory / ".artifacts";
+
+    AbsolutePath TestBaseDirectory => RootDirectory / ".tests";
+
+    AbsolutePath TestResultsDirectory => TestBaseDirectory / "results";
+
+    AbsolutePath TestProjectsBasePath => SourceDirectory / "UnitTests";
+
+    AbsolutePath CoverageDirectory => TestBaseDirectory / "coverage";
+
+    AbsolutePath TempNukeDirectory => RootDirectory / ".nuke" / "temp";
+    
     Target Clean => _ => _
         .Before(Restore)
-        .Executes(() =>
-        {
-        });
+        .UseBuildAction<CleanBuildAction>(this,
+            x => x
+                .AddDirectoryForClean(ArtifactsDirectory)
+                .AddDirectoryForClean(TestBaseDirectory));
 
     Target Restore => _ => _
-        .Executes(() =>
-        {
-        });
+        .UseBuildAction<RestoreBuildAction>(this);
 
     Target Compile => _ => _
         .DependsOn(Restore)
-        .Executes(() =>
-        {
-        });
+        .UseBuildAction<DotNetCompileBuildAction>(this);
 
+    string IBuildInfo.Configuration => Configuration;
+
+    Solution IBuildInfo.Solution => Solution;
+
+    GitRepository IBuildInfo.GitRepository => GitRepository;
+
+    IVersionInfo IBuildInfo.VersionInfo => new GitVersionWrapper(GitVersion, "0.0.0", 1);
+
+    AbsolutePath IBuildInfo.SourceDirectory => SourceDirectory;
+
+    AbsolutePath IBuildInfo.ArtifactsDirectory => ArtifactsDirectory;
 }
