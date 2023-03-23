@@ -22,7 +22,7 @@ using static Nuke.Common.IO.PathConstruction;
     GitHubActionsImage.UbuntuLatest,
     //On = new[] { GitHubActionsTrigger.Push },
     OnPushBranches = new []{"featur**"},
-    InvokedTargets = new[] { nameof(Compile) },
+    InvokedTargets = new[] { nameof(Restore) },
     FetchDepth = 0
     )]
 class Build : NukeBuild, IBuildInfo
