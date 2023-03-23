@@ -5,6 +5,7 @@ using CreativeCoders.NukeBuild.BuildActions;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
+using Nuke.Common.CI.GitHubActions.Configuration;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
@@ -13,6 +14,7 @@ using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Utilities.Collections;
+using Octokit;
 using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
@@ -20,11 +22,11 @@ using static Nuke.Common.IO.PathConstruction;
 [GitHubActions(
     "ci",
     GitHubActionsImage.UbuntuLatest,
-    //On = new[] { GitHubActionsTrigger.Push },
-    OnPushBranches = new []{"featur**"},
+    OnPushBranches = new []{"feature/**"},
     InvokedTargets = new[] { nameof(Restore) },
-    FetchDepth = 0
-    )]
+    FetchDepth = 0,
+    EnableGitHubToken = true
+)]
 class Build : NukeBuild, IBuildInfo
 {
     /// Support plugins are available for:
@@ -59,6 +61,8 @@ class Build : NukeBuild, IBuildInfo
     AbsolutePath TempNukeDirectory => RootDirectory / ".nuke" / "temp";
     
     const string PackageProjectUrl = "https://github.com/CreativeCodersTeam/Simba";
+    
+    //GitHubActionsConfiguration GitHubActionsConfig = new GitHubActionsConfiguration(){}
     
     Target Clean => _ => _
         .Before(Restore)
