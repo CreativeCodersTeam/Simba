@@ -45,6 +45,8 @@ class Build : NukeBuild, IBuildInfo
     [GitRepository] readonly GitRepository GitRepository;
 
     [GitVersion] readonly GitVersion GitVersion;
+    
+    [CI] readonly GitHubActions GitHubActions;
 
     AbsolutePath SourceDirectory => RootDirectory / "source";
 
@@ -71,6 +73,12 @@ class Build : NukeBuild, IBuildInfo
                 .AddDirectoryForClean(ArtifactsDirectory)
                 .AddDirectoryForClean(TestBaseDirectory));
 
+    Target Setup => _ => _
+        .Executes(() =>
+        {
+            
+        });
+    
     Target Restore => _ => _
         .Executes(() => DotNetTasks.DotNetRestore(s => s
             .SetVerbosity(DotNetVerbosity.Diagnostic)
@@ -81,6 +89,8 @@ class Build : NukeBuild, IBuildInfo
         .DependsOn(Restore)
         .UseBuildAction<DotNetCompileBuildAction>(this);
 
+    Object test = GitHubActions.Instance;
+    
     string IBuildInfo.Configuration => Configuration;
     
     Solution IBuildInfo.Solution => Solution;
