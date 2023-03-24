@@ -78,7 +78,8 @@ class Build : NukeBuild, IBuildInfo
             
             return DotNetTasks.DotNetRestore(s => s
                 .SetProjectFile(Solution)
-                .SetSources("https://nuget.pkg.github.com/CreativeCodersTeam/index.json"));
+                //.SetSources("https://nuget.pkg.github.com/CreativeCodersTeam/index.json")
+            );
         });
     
     Target Compile => _ => _
