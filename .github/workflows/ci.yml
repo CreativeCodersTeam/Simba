@@ -25,10 +25,6 @@ jobs:
   ubuntu-latest:
     name: ubuntu-latest
     runs-on: ubuntu-latest
-    permissions:
-      packages: read
-      contents: read
-      checks: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -41,6 +37,6 @@ jobs:
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
       - name: Run './build.cmd Restore'
-        run: ./build.cmd Restore
+        run: ./build.cmd Restore --sources "https://nuget.pkg.github.com/CreativeCodersTeam/index.json"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
