@@ -20,13 +20,16 @@ on:
   push:
     branches:
       - 'feature/**'
+        
+env:
+  NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
 jobs:
   ubuntu-latest:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     permissions:
-      packages: write
+      packages: read
       contents: read
       checks: write
     steps:
