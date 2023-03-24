@@ -64,8 +64,6 @@ class Build : NukeBuild, IBuildInfo
     
     const string PackageProjectUrl = "https://github.com/CreativeCodersTeam/Simba";
     
-    //GitHubActionsConfiguration GitHubActionsConfig = new GitHubActionsConfiguration(){}
-    
     Target Clean => _ => _
         .Before(Restore)
         .UseBuildAction<CleanBuildAction>(this,
@@ -73,12 +71,6 @@ class Build : NukeBuild, IBuildInfo
                 .AddDirectoryForClean(ArtifactsDirectory)
                 .AddDirectoryForClean(TestBaseDirectory));
 
-    Target Setup => _ => _
-        .Executes(() =>
-        {
-            
-        });
-    
     Target Restore => _ => _
         .Executes(() => DotNetTasks.DotNetRestore(s => s
             .SetProjectFile(Solution)
