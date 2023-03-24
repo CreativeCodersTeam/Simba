@@ -81,7 +81,6 @@ class Build : NukeBuild, IBuildInfo
     
     Target Restore => _ => _
         .Executes(() => DotNetTasks.DotNetRestore(s => s
-            .SetVerbosity(DotNetVerbosity.Diagnostic)
             .SetProjectFile(Solution)
             .SetSources("https://nuget.pkg.github.com/CreativeCodersTeam/index.json")));
     
@@ -89,8 +88,6 @@ class Build : NukeBuild, IBuildInfo
         .DependsOn(Restore)
         .UseBuildAction<DotNetCompileBuildAction>(this);
 
-    Object test = GitHubActions.Instance;
-    
     string IBuildInfo.Configuration => Configuration;
     
     Solution IBuildInfo.Solution => Solution;
