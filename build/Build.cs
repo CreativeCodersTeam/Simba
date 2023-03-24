@@ -20,28 +20,22 @@ using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 
-[GitHubActions(
-    "ci",
-    GitHubActionsImage.UbuntuLatest,
-    OnPushBranches = new []{"feature/**"},
-    InvokedTargets = new[] { nameof(Restore) },
-    FetchDepth = 0,
-    EnableGitHubToken = true
-)]
+// [GitHubActions(
+//     "ci",
+//     GitHubActionsImage.UbuntuLatest,
+//     OnPushBranches = new []{"feature/**"},
+//     InvokedTargets = new[] { nameof(Restore) },
+//     FetchDepth = 0,
+//     EnableGitHubToken = true
+// )]
 class Build : NukeBuild, IBuildInfo
 {
-    /// Support plugins are available for:
-    ///   - JetBrains ReSharper        https://nuke.build/resharper
-    ///   - JetBrains Rider            https://nuke.build/rider
-    ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
-    ///   - Microsoft VSCode           https://nuke.build/vscode
-
     public static int Main () => Execute<Build>(x => x.Restore);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Solution] readonly Solution Solution;
+    [Solution] public Solution Solution { get; set; }
 
     [GitRepository] readonly GitRepository GitRepository;
 
