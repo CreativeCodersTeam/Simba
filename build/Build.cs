@@ -12,6 +12,7 @@ using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.GitHub;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Utilities.Collections;
 using Octokit;
@@ -72,9 +73,13 @@ class Build : NukeBuild, IBuildInfo
                 .AddDirectoryForClean(TestBaseDirectory));
 
     Target Restore => _ => _
-        .Executes(() => DotNetTasks.DotNetRestore(s => s
-            .SetProjectFile(Solution)
-            .SetSources("https://nuget.pkg.github.com/CreativeCodersTeam/index.json")));
+        .Executes(() =>
+        {
+            
+            return DotNetTasks.DotNetRestore(s => s
+                .SetProjectFile(Solution)
+                .SetSources("https://nuget.pkg.github.com/CreativeCodersTeam/index.json"));
+        });
     
     Target Compile => _ => _
         .DependsOn(Restore)
