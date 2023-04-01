@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="CreativeCoders.Daemon.Linux" Version="1.4.0-alphadaemonwithd0005" />
+      <PackageReference Include="CreativeCoders.Daemon.Linux" Version="2.1.1" />
     </ItemGroup>
 
     <ItemGroup>

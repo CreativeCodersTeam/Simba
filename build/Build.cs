@@ -1,94 +1,52 @@
 using System;
-using System.Linq;
-using CreativeCoders.NukeBuild;
-using CreativeCoders.NukeBuild.BuildActions;
+using System.Collections.Generic;
+using CreativeCoders.Core;
+using CreativeCoders.Core.Collections;
+using CreativeCoders.NukeBuild.Components.Parameters;
+using CreativeCoders.NukeBuild.Components.Targets;
+using CreativeCoders.NukeBuild.Components.Targets.Settings;
 using Nuke.Common;
-using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
-using Nuke.Common.CI.GitHubActions.Configuration;
-using Nuke.Common.Execution;
-using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
-using Nuke.Common.Tooling;
-using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Tools.GitHub;
-using Nuke.Common.Tools.GitVersion;
-using Nuke.Common.Utilities.Collections;
-using Octokit;
-using static Nuke.Common.EnvironmentInfo;
-using static Nuke.Common.IO.FileSystemTasks;
-using static Nuke.Common.IO.PathConstruction;
 
-// [GitHubActions(
-//     "ci",
-//     GitHubActionsImage.UbuntuLatest,
-//     OnPushBranches = new []{"feature/**"},
-//     InvokedTargets = new[] { nameof(Restore) },
-//     FetchDepth = 0,
-//     EnableGitHubToken = true
-// )]
-class Build : NukeBuild, IBuildInfo
+[GitHubActions("integration", GitHubActionsImage.WindowsLatest,
+    OnPushBranches = new[]{"feature/**"},
+    OnPullRequestBranches = new[]{"main"},
+    InvokedTargets = new []{"clean", "restore", "compile", "test", "codecoveragereport"},
+    EnableGitHubToken = true,
+    PublishArtifacts = true,
+    FetchDepth = 0
+)]
+[GitHubActions("main", GitHubActionsImage.WindowsLatest,
+    OnPushBranches = new[]{"main"},
+    InvokedTargets = new []{"clean", "restore", "compile", "test", "codecoveragereport"},
+    EnableGitHubToken = true,
+    PublishArtifacts = true,
+    FetchDepth = 0
+)]
+[GitHubActions(ReleaseWorkflow, GitHubActionsImage.WindowsLatest,
+    OnPushTags = new []{"v**"},
+    InvokedTargets = new []{"clean", "restore", "compile", "test", "codecoveragereport"},
+    EnableGitHubToken = true,
+    PublishArtifacts = true,
+    FetchDepth = 0
+)]
+class Build : NukeBuild,
+    IGitRepositoryParameter,
+    IConfigurationParameter,
+    IGitVersionParameter,
+    ISourceDirectoryParameter,
+    IArtifactsSettings,
+    ICleanTarget, ICompileTarget, IRestoreTarget, ITestTarget, ICodeCoverageReportTarget
 {
-    public static int Main () => Execute<Build>(x => x.Restore);
-
-    [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
-
-    [Solution] public Solution Solution { get; set; }
-
-    [GitRepository] readonly GitRepository GitRepository;
-
-    [GitVersion] readonly GitVersion GitVersion;
+    const string ReleaseWorkflow = "release";
     
-    [CI] readonly GitHubActions GitHubActions;
+    public static int Main () => Execute<Build>(x => ((ICompileTarget)x).Compile);
 
-    AbsolutePath SourceDirectory => RootDirectory / "source";
-
-    AbsolutePath ArtifactsDirectory => RootDirectory / ".artifacts";
-
-    AbsolutePath TestBaseDirectory => RootDirectory / ".tests";
-
-    AbsolutePath TestResultsDirectory => TestBaseDirectory / "results";
-
-    AbsolutePath TestProjectsBasePath => SourceDirectory / "UnitTests";
-
-    AbsolutePath CoverageDirectory => TestBaseDirectory / "coverage";
-
-    AbsolutePath TempNukeDirectory => RootDirectory / ".nuke" / "temp";
+    IList<AbsolutePath> ICleanSettings.DirectoriesToClean =>
+        this.As<ICleanSettings>().DefaultDirectoriesToClean
+            .AddRange(this.As<ITestSettings>().TestBaseDirectory);
     
-    const string PackageProjectUrl = "https://github.com/CreativeCodersTeam/Simba";
-    
-    Target Clean => _ => _
-        .Before(Restore)
-        .UseBuildAction<CleanBuildAction>(this,
-            x => x
-                .AddDirectoryForClean(ArtifactsDirectory)
-                .AddDirectoryForClean(TestBaseDirectory));
-
-    Target Restore => _ => _
-        .Executes(() =>
-        {
-            
-            return DotNetTasks.DotNetRestore(s => s
-                .SetProjectFile(Solution)
-                //.SetSources("https://nuget.pkg.github.com/CreativeCodersTeam/index.json")
-            );
-        });
-    
-    Target Compile => _ => _
-        .DependsOn(Restore)
-        .UseBuildAction<DotNetCompileBuildAction>(this);
-
-    string IBuildInfo.Configuration => Configuration;
-    
-    Solution IBuildInfo.Solution => Solution;
-    
-    GitRepository IBuildInfo.GitRepository => GitRepository;
-    
-    IVersionInfo IBuildInfo.VersionInfo => new GitVersionWrapper(GitVersion, "0.0.0", 1);
-    
-    AbsolutePath IBuildInfo.SourceDirectory => SourceDirectory;
-    
-    AbsolutePath IBuildInfo.ArtifactsDirectory => ArtifactsDirectory;
+    public IEnumerable<Project> TestProjects => Array.Empty<Project>();
 }
