@@ -43,10 +43,5 @@ class Build : NukeBuild,
     const string ReleaseWorkflow = "release";
     
     public static int Main () => Execute<Build>(x => ((ICompileTarget)x).Compile);
-
-    IList<AbsolutePath> ICleanSettings.DirectoriesToClean =>
-        this.As<ICleanSettings>().DefaultDirectoriesToClean
-            .AddRange(this.As<ITestSettings>().TestBaseDirectory);
     
-    public IEnumerable<Project> TestProjects => Array.Empty<Project>();
 }
