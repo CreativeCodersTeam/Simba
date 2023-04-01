@@ -10,7 +10,7 @@ using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 
-[GitHubActions("integration", GitHubActionsImage.WindowsLatest,
+[GitHubActions("integration", GitHubActionsImage.UbuntuLatest,
     OnPushBranches = new[]{"feature/**"},
     OnPullRequestBranches = new[]{"main"},
     InvokedTargets = new []{"clean", "restore", "compile", "test", "codecoveragereport"},
@@ -18,14 +18,14 @@ using Nuke.Common.ProjectModel;
     PublishArtifacts = true,
     FetchDepth = 0
 )]
-[GitHubActions("main", GitHubActionsImage.WindowsLatest,
+[GitHubActions("main", GitHubActionsImage.UbuntuLatest,
     OnPushBranches = new[]{"main"},
     InvokedTargets = new []{"clean", "restore", "compile", "test", "codecoveragereport"},
     EnableGitHubToken = true,
     PublishArtifacts = true,
     FetchDepth = 0
 )]
-[GitHubActions(ReleaseWorkflow, GitHubActionsImage.WindowsLatest,
+[GitHubActions(ReleaseWorkflow, GitHubActionsImage.UbuntuLatest,
     OnPushTags = new []{"v**"},
     InvokedTargets = new []{"clean", "restore", "compile", "test", "codecoveragereport"},
     EnableGitHubToken = true,
