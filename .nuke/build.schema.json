@@ -73,10 +73,8 @@
             "type": "string",
             "enum": [
               "Clean",
-              "CodeCoverageReport",
               "Compile",
-              "Restore",
-              "Test"
+              "Restore"
             ]
           }
         },
@@ -91,10 +89,8 @@
             "type": "string",
             "enum": [
               "Clean",
-              "CodeCoverageReport",
               "Compile",
-              "Restore",
-              "Test"
+              "Restore"
             ]
           }
         },
