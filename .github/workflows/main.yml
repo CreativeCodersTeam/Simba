@@ -36,7 +36,11 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd clean restore compile'
-        run: ./build.cmd clean restore compile
+      - name: Run './build.cmd clean restore compile publish'
+        run: ./build.cmd clean restore compile publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: simbasrv.0.1-unknown
+          path: .artifacts/dist/simbasrv.0.1-unknown
