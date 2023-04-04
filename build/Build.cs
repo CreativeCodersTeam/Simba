@@ -1,15 +1,10 @@
-using System;
 using System.Collections.Generic;
-using CreativeCoders.Core;
-using CreativeCoders.Core.Collections;
-using CreativeCoders.Core.SysEnvironment;
 using CreativeCoders.NukeBuild.Components.Parameters;
 using CreativeCoders.NukeBuild.Components.Targets;
 using CreativeCoders.NukeBuild.Components.Targets.Settings;
 using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.IO;
-using Nuke.Common.ProjectModel;
 
 [GitHubActions("integration", GitHubActionsImage.UbuntuLatest,
     OnPushBranches = new[]{"feature/**"},
@@ -45,26 +40,14 @@ class Build : NukeBuild,
     
     public static int Main () => Execute<Build>(x => ((ICompileTarget)x).Compile);
 
-    protected override void OnTargetSucceeded(string target)
-    {
-        base.OnTargetSucceeded(target);
-
-        if (target == nameof(IPublishTarget.Publish))
-        {
-            Console.WriteLine("SET ENV buildversion");
-            var env = Env.GetEnvironmentVariable("GITHUB_ENV", EnvironmentVariableTarget.User);
-            Env.SetEnvironmentVariable("GITHUB_ENV", $"{env}\nbuildversion={GetVersion()}", EnvironmentVariableTarget.User);
-        }
-    }
-
     IEnumerable<PublishingItem> IPublishSettings.PublishingItems => new[]
     {
         new PublishingItem(
             GetSourceDir() / "CreativeCoders.Simba.Server.Linux" / "CreativeCoders.Simba.Server.Linux.csproj",
-            GetDistDir() / $"simbasrv-{GetVersion()}")
+            GetDistDir() / "simbasrv")
     };
 
-    string GetVersion() => ((IGitVersionParameter) this).GitVersion?.NuGetVersionV2 ?? "0.1-unknown";
+    //string GetVersion() => ((IGitVersionParameter) this).GitVersion?.NuGetVersionV2 ?? "0.1-unknown";
 
     AbsolutePath GetSourceDir() => ((ISourceDirectoryParameter) this).SourceDirectory;
 
