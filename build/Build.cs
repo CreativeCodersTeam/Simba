@@ -48,7 +48,7 @@ class Build : NukeBuild,
     {
         new PublishingItem(
             GetSourceDir() / "CreativeCoders.Simba.Server.Linux" / "CreativeCoders.Simba.Server.Linux.csproj",
-            GetDistDir() / $"simbasrv")
+            GetDistDir() / "simbasrv")
     };
 
     string GetVersion() => ((IGitVersionParameter) this).GitVersion?.NuGetVersionV2 ?? "0.1-unknown";
