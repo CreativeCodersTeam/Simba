@@ -52,8 +52,8 @@ class Build : NukeBuild,
         if (target == nameof(IPublishTarget.Publish))
         {
             Console.WriteLine("SET ENV buildversion");
-            var env = Env.GetEnvironmentVariable("GITHUB_ENV");
-            Env.SetEnvironmentVariable("GITHUB_ENV", $"{env}\nbuildversion={GetVersion()}");
+            var env = Env.GetEnvironmentVariable("GITHUB_ENV", EnvironmentVariableTarget.User);
+            Env.SetEnvironmentVariable("GITHUB_ENV", $"{env}\nbuildversion={GetVersion()}", EnvironmentVariableTarget.User);
         }
     }
 
