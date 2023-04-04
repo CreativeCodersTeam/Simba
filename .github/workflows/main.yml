@@ -42,5 +42,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v3
         with:
-          name: simbasrv.0.1-unknown
-          path: .artifacts/dist/simbasrv.0.1-unknown
+          name: simbasrv
+          path: .artifacts/dist/simbasrv
