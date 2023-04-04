@@ -52,7 +52,7 @@ class Build : NukeBuild,
         if (target == nameof(IPublishTarget.Publish))
         {
             Console.WriteLine("SET ENV buildversion");
-            Env.SetEnvironmentVariable("buildversion", GetVersion());
+            Env.SetEnvironmentVariable("buildversion", GetVersion(), EnvironmentVariableTarget.User);
         }
     }
 
