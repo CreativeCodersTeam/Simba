@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using CreativeCoders.NukeBuild.Components.Parameters;
 using CreativeCoders.NukeBuild.Components.Targets;
 using CreativeCoders.NukeBuild.Components.Targets.Settings;
@@ -9,7 +10,7 @@ using Nuke.Common.IO;
 [GitHubActions("integration", GitHubActionsImage.UbuntuLatest,
     OnPushBranches = new[]{"feature/**"},
     OnPullRequestBranches = new[]{"main"},
-    InvokedTargets = new []{"clean", "restore", "compile", "publish"},
+    InvokedTargets = new []{"clean", "restore", "compile", "publish", "CreateLinuxArchive"},
     EnableGitHubToken = true,
     PublishArtifacts = true,
     FetchDepth = 0
@@ -40,6 +41,21 @@ class Build : NukeBuild,
     
     public static int Main () => Execute<Build>(x => ((ICompileTarget)x).Compile);
 
+    Target CreateLinuxArchive => _ => _
+        .DependsOn<IPublishTarget>()
+        .Produces(GetDistDir() / "simbasrv.tar.gz")
+        .Executes(() =>
+        {
+            Process
+                .Start("tar", new[]
+                {
+                    "-czf",
+                    GetDistDir() / "simbasrv.tar.gz",
+                    GetDistDir() / "simbasrv"
+                })
+                .WaitForExit();
+        });
+    
     IEnumerable<PublishingItem> IPublishSettings.PublishingItems => new[]
     {
         new PublishingItem(
