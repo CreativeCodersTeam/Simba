@@ -57,6 +57,7 @@ class Build : NukeBuild,
                 {
                     "-czf",
                     GetDistDir() / "simbasrv.tar.gz",
+                    "-C",
                     GetDistDir() / "simbasrv"
                 })
                 .WaitForExit();
@@ -67,6 +68,11 @@ class Build : NukeBuild,
 
     private async Task CreateGitHubRelease(AbsolutePath archiveFileName)
     {
+        if (GitHubActions.Instance?.IsPullRequest != false)
+        {
+            return;
+        }
+        
         GitHubTasks.GitHubClient = new GitHubClient(new ProductHeaderValue("CreativeCoders.Nuke"))
         {
             Credentials = new Credentials(GitHubToken)
@@ -74,10 +80,10 @@ class Build : NukeBuild,
 
         var release = await GitHubTasks.GitHubClient.Repository.Release
             .Create("CreativeCodersTeam", "Simba",
-                new NewRelease("0.1.1")
+                new NewRelease("0.1.2")
                 {
-                    Name = "Release 0.1.1",
-                    Body = "New release 0.1.1",
+                    Name = "Release 0.1.2",
+                    Body = "New release 0.1.2",
                     Draft = true,
                     Prerelease = !string.IsNullOrWhiteSpace(((IGitVersionParameter) this).GitVersion?.PreReleaseTag)
                 })
