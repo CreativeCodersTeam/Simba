@@ -74,11 +74,12 @@ class Build : NukeBuild,
 
         var release = await GitHubTasks.GitHubClient.Repository.Release
             .Create("CreativeCodersTeam", "Simba",
-                new NewRelease("0.1")
+                new NewRelease("0.1.1")
                 {
-                    Name = "Release 0.1",
-                    Body = "New release 0.1",
-                    Draft = true
+                    Name = "Release 0.1.1",
+                    Body = "New release 0.1.1",
+                    Draft = true,
+                    Prerelease = !string.IsNullOrWhiteSpace(((IGitVersionParameter) this).GitVersion?.PreReleaseTag)
                 })
             .ConfigureAwait(false);
         
@@ -92,7 +93,7 @@ class Build : NukeBuild,
         };
         var _ = await GitHubTasks.GitHubClient.Repository.Release.UploadAsset(release, releaseAssetUpload);
         
-        release = await GitHubTasks.GitHubClient.Repository.Release
+        await GitHubTasks.GitHubClient.Repository.Release
             .Edit("CreativeCodersTeam", "Simba", release.Id, new ReleaseUpdate { Draft = false });
     }
 
