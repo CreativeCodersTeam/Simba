@@ -58,7 +58,8 @@ class Build : NukeBuild,
                     "-czf",
                     GetDistDir() / "simbasrv.tar.gz",
                     "-C",
-                    GetDistDir() / "simbasrv"
+                    GetDistDir() / "simbasrv",
+                    "."
                 })
                 .WaitForExit();
 
