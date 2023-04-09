@@ -40,7 +40,7 @@ class Build : NukeBuild,
     IGitVersionParameter,
     ISourceDirectoryParameter,
     IArtifactsSettings,
-    ICleanTarget, ICompileTarget, IRestoreTarget, IPublishTarget, ICreateDistPackagesTarget, ICreateGithubRelease
+    ICleanTarget, ICompileTarget, IRestoreTarget, IPublishTarget, ICreateDistPackagesTarget, ICreateGithubReleaseTarget
 {
     const string ReleaseWorkflow = "release";
     
