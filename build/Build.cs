@@ -46,6 +46,11 @@ class Build : NukeBuild,
     
     public static int Main () => Execute<Build>(x => ((ICompileTarget)x).Compile);
 
+    public Build()
+    {
+        FileSys.Directory.CreateDirectory(DistOutputPath);
+    }
+    
     [Parameter(Name = "GITHUB_TOKEN")] string GitHubToken;
     
     Target CreateLinuxArchive => _ => _
