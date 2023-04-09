@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using CreativeCoders.Core;
 using CreativeCoders.Core.IO;
 using CreativeCoders.NukeBuild.Components.Parameters;
 using CreativeCoders.NukeBuild.Components.Targets;
@@ -14,7 +15,7 @@ using Octokit;
 [GitHubActions("integration", GitHubActionsImage.UbuntuLatest,
     OnPushBranches = new[]{"feature/**"},
     OnPullRequestBranches = new[]{"main"},
-    InvokedTargets = new []{"clean", "restore", "compile", "publish"},
+    InvokedTargets = new []{"clean", "restore", "compile", "publish", "CreateDistPackages", "CreateGithubRelease"},
     EnableGitHubToken = true,
     PublishArtifacts = true,
     FetchDepth = 0
@@ -39,7 +40,7 @@ class Build : NukeBuild,
     IGitVersionParameter,
     ISourceDirectoryParameter,
     IArtifactsSettings,
-    ICleanTarget, ICompileTarget, IRestoreTarget, IPublishTarget
+    ICleanTarget, ICompileTarget, IRestoreTarget, IPublishTarget, ICreateDistPackagesTarget, ICreateGithubRelease
 {
     const string ReleaseWorkflow = "release";
     
@@ -111,9 +112,29 @@ class Build : NukeBuild,
             GetDistDir() / "simbasrv")
     };
 
-    //string GetVersion() => ((IGitVersionParameter) this).GitVersion?.NuGetVersionV2 ?? "0.1-unknown";
+    string GetVersion() => ((IGitVersionParameter) this).GitVersion?.NuGetVersionV2 ?? "0.1-unknown";
 
     AbsolutePath GetSourceDir() => ((ISourceDirectoryParameter) this).SourceDirectory;
 
     AbsolutePath GetDistDir() => ((IArtifactsSettings) this).ArtifactsDirectory / "dist";
+
+    public IEnumerable<DistPackage> DistPackages => new[]
+    {
+        new DistPackage($"simbasrv-{GetVersion()}", GetDistDir() / "simbasrv") { Format = DistPackageFormat.TarGz }
+    };
+
+    public AbsolutePath DistOutputPath => GetDistDir() / "packages";
+
+    public string ReleaseName => $"Release {GetVersion()}";
+    
+    public string ReleaseBody => $"Release {GetVersion()}";
+
+    public string ReleaseVersion => GetVersion();
+
+    public IEnumerable<GithubReleaseAsset> ReleaseAssets => new[]
+    {
+        new GithubReleaseAsset(DistOutputPath / $"simbasrv-{GetVersion()}.tar.gz",
+            FileSys.File.OpenRead(DistOutputPath / $"simbasrv-{GetVersion()}.tar.gz"))
+            { DisposeStreamAfterUse = true }
+    };
 }
