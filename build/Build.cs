@@ -52,63 +52,6 @@ class Build : NukeBuild,
     }
     
     [Parameter(Name = "GITHUB_TOKEN")] string GitHubToken;
-    
-    Target CreateLinuxArchive => _ => _
-        .DependsOn<IPublishTarget>()
-        .Produces(GetDistDir() / "simbasrv.tar.gz")
-        .Executes(async () =>
-        {
-            Process
-                .Start("tar", new[]
-                {
-                    "-czf",
-                    GetDistDir() / "simbasrv.tar.gz",
-                    "-C",
-                    GetDistDir() / "simbasrv",
-                    "."
-                })
-                .WaitForExit();
-
-            await CreateGitHubRelease(GetDistDir() / "simbasrv.tar.gz")
-                .ConfigureAwait(false);
-        });
-
-    private async Task CreateGitHubRelease(AbsolutePath archiveFileName)
-    {
-        if (GitHubActions.Instance?.IsPullRequest != false)
-        {
-            return;
-        }
-        
-        GitHubTasks.GitHubClient = new GitHubClient(new ProductHeaderValue("CreativeCoders.Nuke"))
-        {
-            Credentials = new Credentials(GitHubToken)
-        };
-
-        var release = await GitHubTasks.GitHubClient.Repository.Release
-            .Create("CreativeCodersTeam", "Simba",
-                new NewRelease("0.1.2")
-                {
-                    Name = "Release 0.1.2",
-                    Body = "New release 0.1.2",
-                    Draft = true,
-                    Prerelease = !string.IsNullOrWhiteSpace(((IGitVersionParameter) this).GitVersion?.PreReleaseTag)
-                })
-            .ConfigureAwait(false);
-        
-        var assetContentType = "application/x-gtar";
-        
-        var releaseAssetUpload = new ReleaseAssetUpload
-        {
-            ContentType = assetContentType,
-            FileName = FileSys.Path.GetFileName(archiveFileName),
-            RawData = FileSys.File.OpenRead(archiveFileName)
-        };
-        var _ = await GitHubTasks.GitHubClient.Repository.Release.UploadAsset(release, releaseAssetUpload);
-        
-        await GitHubTasks.GitHubClient.Repository.Release
-            .Edit("CreativeCodersTeam", "Simba", release.Id, new ReleaseUpdate { Draft = false });
-    }
 
     IEnumerable<PublishingItem> IPublishSettings.PublishingItems => new[]
     {
