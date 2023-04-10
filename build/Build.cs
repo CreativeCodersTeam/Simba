@@ -15,7 +15,7 @@ using Octokit;
 [GitHubActions("integration", GitHubActionsImage.UbuntuLatest,
     OnPushBranches = new[]{"feature/**"},
     OnPullRequestBranches = new[]{"main"},
-    InvokedTargets = new []{"clean", "restore", "compile", "publish", "CreateDistPackages", "CreateGithubRelease"},
+    InvokedTargets = new []{"clean", "restore", "compile", "publish"},
     EnableGitHubToken = true,
     PublishArtifacts = true,
     FetchDepth = 0
@@ -29,7 +29,7 @@ using Octokit;
 )]
 [GitHubActions(ReleaseWorkflow, GitHubActionsImage.UbuntuLatest,
     OnPushTags = new []{"v**"},
-    InvokedTargets = new []{"clean", "restore", "compile", "publish", "CreateLinuxArchive"},
+    InvokedTargets = new []{"clean", "restore", "compile", "publish", "CreateDistPackages", "CreateGithubRelease"},
     EnableGitHubToken = true,
     PublishArtifacts = true,
     FetchDepth = 0
