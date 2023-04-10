@@ -39,7 +39,7 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd clean restore compile publish CreateDistPackages CreateGithubRelease'
-        run: ./build.cmd clean restore compile publish CreateDistPackages CreateGithubRelease
+      - name: Run './build.cmd clean restore compile publish'
+        run: ./build.cmd clean restore compile publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
