@@ -32,5 +32,5 @@ echo "Change files owner"
 chown -R "$USER_NAME:$USER_NAME" "${APP_DIR:?}/"*
 chown "$USER_NAME:$USER_NAME" "${APP_DIR:?}"
 
-echo ""
+echo "Install systemd service"
 dotnet "$APP_DIR"/simbasrv.dll --install
