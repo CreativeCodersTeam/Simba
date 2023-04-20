@@ -11,10 +11,10 @@ public static class SubModulesServiceCollectionExtensions
     {
         services.AddSingleton<ISubModule, LoggerSubModule>();
         
-        services.AddSingleton<ISubModule, AccessControlSubModule>();
-
-        services.AddSingleton<ISubModule, RetainSubModule>();
-        
-        services.AddSingleton<IAuthenticator, NoAuthAuthenticator>();
+        // services.AddSingleton<ISubModule, AccessControlSubModule>();
+        //
+        // services.AddSingleton<ISubModule, RetainSubModule>();
+        //
+        // services.AddSingleton<IAuthenticator, NoAuthAuthenticator>();
     }
 }
