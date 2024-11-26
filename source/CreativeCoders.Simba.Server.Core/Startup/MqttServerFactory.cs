@@ -12,7 +12,7 @@ public class MqttServerFactory : IMqttServerFactory
 
     public MqttServerFactory(IOptions<ServerOptions> options)
     {
-        _options = Ensure.NotNull(options, nameof(options)).Value;
+        _options = Ensure.NotNull(options).Value;
     }
     
     public MqttServer CreateServer()
@@ -27,6 +27,8 @@ public class MqttServerFactory : IMqttServerFactory
         {
             mqttServerOptionsBuilder.WithDefaultEndpoint();
         }
+
+        mqttServerOptionsBuilder.WithKeepAlive();
 
         var mqttServerOptions = mqttServerOptionsBuilder.Build();
         

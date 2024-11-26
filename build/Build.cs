@@ -13,23 +13,23 @@ using Nuke.Common.Tools.GitHub;
 using Octokit;
 
 [GitHubActions("integration", GitHubActionsImage.UbuntuLatest,
-    OnPushBranches = new[]{"feature/**"},
-    OnPullRequestBranches = new[]{"main"},
-    InvokedTargets = new []{"clean", "restore", "compile", "publish"},
+    OnPushBranches = ["feature/**"],
+    OnPullRequestBranches = ["main"],
+    InvokedTargets = ["clean", "restore", "build", "publish"],
     EnableGitHubToken = true,
     PublishArtifacts = true,
     FetchDepth = 0
 )]
 [GitHubActions("main", GitHubActionsImage.UbuntuLatest,
-    OnPushBranches = new[]{"main"},
-    InvokedTargets = new []{"clean", "restore", "compile", "publish"},
+    OnPushBranches = ["main"],
+    InvokedTargets = ["clean", "restore", "build", "publish"],
     EnableGitHubToken = true,
     PublishArtifacts = true,
     FetchDepth = 0
 )]
 [GitHubActions(ReleaseWorkflow, GitHubActionsImage.UbuntuLatest,
-    OnPushTags = new []{"v**"},
-    InvokedTargets = new []{"clean", "restore", "compile", "publish", "CreateDistPackages", "CreateGithubRelease"},
+    OnPushTags = ["v**"],
+    InvokedTargets = ["clean", "restore", "build", "publish", "CreateDistPackages", "CreateGithubRelease"],
     EnableGitHubToken = true,
     PublishArtifacts = true,
     FetchDepth = 0
@@ -40,11 +40,11 @@ class Build : NukeBuild,
     IGitVersionParameter,
     ISourceDirectoryParameter,
     IArtifactsSettings,
-    ICleanTarget, ICompileTarget, IRestoreTarget, IPublishTarget, ICreateDistPackagesTarget, ICreateGithubReleaseTarget
+    ICleanTarget, IBuildTarget, IRestoreTarget, IPublishTarget, ICreateDistPackagesTarget, ICreateGithubReleaseTarget
 {
     const string ReleaseWorkflow = "release";
     
-    public static int Main () => Execute<Build>(x => ((ICompileTarget)x).Compile);
+    public static int Main () => Execute<Build>(x => ((IBuildTarget)x).Build);
 
     public Build()
     {
@@ -56,17 +56,17 @@ class Build : NukeBuild,
     Target CreateLinuxArchive => _ => _
         .DependsOn<IPublishTarget>()
         .Produces(GetDistDir() / "simbasrv.tar.gz")
-        .Executes(async () =>
+        .Executes<Task>(async () =>
         {
             Process
-                .Start("tar", new[]
-                {
+                .Start("tar",
+                [
                     "-czf",
                     GetDistDir() / "simbasrv.tar.gz",
                     "-C",
                     GetDistDir() / "simbasrv",
                     "."
-                })
+                ])
                 .WaitForExit();
 
             await CreateGitHubRelease(GetDistDir() / "simbasrv.tar.gz")
@@ -104,18 +104,18 @@ class Build : NukeBuild,
             FileName = FileSys.Path.GetFileName(archiveFileName),
             RawData = FileSys.File.OpenRead(archiveFileName)
         };
-        var _ = await GitHubTasks.GitHubClient.Repository.Release.UploadAsset(release, releaseAssetUpload);
+        _ = await GitHubTasks.GitHubClient.Repository.Release.UploadAsset(release, releaseAssetUpload);
         
         await GitHubTasks.GitHubClient.Repository.Release
             .Edit("CreativeCodersTeam", "Simba", release.Id, new ReleaseUpdate { Draft = false });
     }
 
-    IEnumerable<PublishingItem> IPublishSettings.PublishingItems => new[]
-    {
+    IEnumerable<PublishingItem> IPublishSettings.PublishingItems =>
+    [
         new PublishingItem(
             GetSourceDir() / "CreativeCoders.Simba.Server.Linux" / "CreativeCoders.Simba.Server.Linux.csproj",
             GetDistDir() / "simbasrv")
-    };
+    ];
 
     string GetVersion() => ((IGitVersionParameter) this).GitVersion?.NuGetVersionV2 ?? "0.1-unknown";
 
@@ -123,10 +123,10 @@ class Build : NukeBuild,
 
     AbsolutePath GetDistDir() => ((IArtifactsSettings) this).ArtifactsDirectory / "dist";
 
-    public IEnumerable<DistPackage> DistPackages => new[]
-    {
+    public IEnumerable<DistPackage> DistPackages =>
+    [
         new DistPackage($"simbasrv-{GetVersion()}", GetDistDir() / "simbasrv") { Format = DistPackageFormat.TarGz }
-    };
+    ];
 
     public AbsolutePath DistOutputPath => GetDistDir() / "packages";
 
@@ -136,10 +136,8 @@ class Build : NukeBuild,
 
     public string ReleaseVersion => GetVersion();
 
-    public IEnumerable<GithubReleaseAsset> ReleaseAssets => new[]
-    {
-        new GithubReleaseAsset(DistOutputPath / $"simbasrv-{GetVersion()}.tar.gz",
-            FileSys.File.OpenRead(DistOutputPath / $"simbasrv-{GetVersion()}.tar.gz"))
-            { DisposeStreamAfterUse = true }
-    };
+    public IEnumerable<GithubReleaseAsset> ReleaseAssets =>
+    [
+        new GithubReleaseAsset(DistOutputPath / $"simbasrv-{GetVersion()}.tar.gz")
+    ];
 }
