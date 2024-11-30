@@ -3,4 +3,6 @@
 public class ServerOptions
 {
     public ServerEndpoints Endpoints { get; set; } = ServerEndpoints.Default;
+
+    public bool KeepAlive { get; set; }
 }

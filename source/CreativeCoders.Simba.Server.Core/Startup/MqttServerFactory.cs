@@ -28,7 +28,10 @@ public class MqttServerFactory : IMqttServerFactory
             mqttServerOptionsBuilder.WithDefaultEndpoint();
         }
 
-        mqttServerOptionsBuilder.WithKeepAlive();
+        if (_options.KeepAlive)
+        {
+            mqttServerOptionsBuilder.WithKeepAlive();
+        }
 
         var mqttServerOptions = mqttServerOptionsBuilder.Build();
         

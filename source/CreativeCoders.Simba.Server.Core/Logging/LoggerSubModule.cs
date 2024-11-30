@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using CreativeCoders.Simba.Server.Core.SubModules;
 using Microsoft.Extensions.Logging;
 using MQTTnet.Server;
@@ -37,6 +38,7 @@ public class LoggerSubModule : ISubModule
         return Log(text, args.ApplicationMessage.Topic, payload);
     }
     
+    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem")]
     private Task Log(string logMessage, params object[] args)
     {
 #pragma warning disable CA2254
